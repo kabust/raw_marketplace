@@ -10,11 +10,13 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "django (>=5.2,<6.0)",
-    "django-rest-framework (>=0.1.0,<0.2.0)",
     "django-debug-toolbar (>=5.1.0,<6.0.0)",
     "black (>=25.1.0,<26.0.0)",
     "flake8 (>=7.2.0,<8.0.0)",
-    "flake8-pyproject (>=1.2.3,<2.0.0)"
+    "flake8-pyproject (>=1.2.3,<2.0.0)",
+    "djangorestframework (>=3.16.0,<4.0.0)",
+    "markdown (>=3.8,<4.0)",
+    "django-filter (>=25.1,<26.0)"
 ]
 
 
