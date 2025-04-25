@@ -16,7 +16,8 @@ dependencies = [
     "flake8-pyproject (>=1.2.3,<2.0.0)",
     "djangorestframework (>=3.16.0,<4.0.0)",
     "markdown (>=3.8,<4.0)",
-    "django-filter (>=25.1,<26.0)"
+    "django-filter (>=25.1,<26.0)",
+    "pillow (>=11.2.1,<12.0.0)"
 ]
 
 
