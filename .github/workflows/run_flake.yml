@@ -23,4 +23,4 @@ jobs:
         run: pip install flake8 flake8-pyproject
 
       - name: Run flake8 via pflake8
-        run: python -m pflake8 .
+        run: flake8p .
