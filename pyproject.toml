@@ -33,7 +33,8 @@ max-line-length = 99
 exclude = [
     ".git",
     "__pycache__",
-    "venv"
+    "venv",
+    "migrations"
 ]
 extend-ignore = [
     "E203"
