@@ -29,7 +29,7 @@ build-backend = "poetry.core.masonry.api"
 package-mode = false
 
 [tool.flake8]
-max-line-length = 79
+max-line-length = 99
 exclude = [
     ".git",
     "__pycache__",
@@ -40,7 +40,7 @@ extend-ignore = [
 ]
 
 [tool.black]
-line-length = 79
+line-length = 99
 target-version = ['py313']
 extend-exclude = '''
 (
