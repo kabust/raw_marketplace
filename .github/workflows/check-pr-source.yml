@@ -1,0 +1,44 @@
+name: Check PR Source Branch
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+    branches:
+      - prod
+      - staging
+      - develop
+
+jobs:
+  validate-pr-source:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if PR is from allowed branch
+        run: |
+          echo "Target branch: ${{ github.event.pull_request.base.ref }}"
+          echo "Source branch: ${{ github.event.pull_request.head.ref }}"
+
+          TARGET_BRANCH="${{ github.event.pull_request.base.ref }}"
+          SOURCE_BRANCH="${{ github.event.pull_request.head.ref }}"
+          
+          if [[ "$TARGET_BRANCH" == "main" ]]; then
+            echo "❌ PRs to main are forbidden"
+            exit 1
+          fi
+          
+          if [[ "$TARGET_BRANCH" == "prod" && "$SOURCE_BRANCH" != "staging" ]]; then
+            echo "❌ PRs to prod must come from staging!"
+            exit 1
+          fi
+
+          if [[ "$TARGET_BRANCH" == "staging" && "$SOURCE_BRANCH" != "develop" ]]; then
+            echo "❌ PRs to staging must come from develop!"
+            exit 1
+          fi
+
+          if [[ "$TARGET_BRANCH" == "develop" && "${SOURCE_BRANCH}" != feature/* ]]; then
+            echo "❌ PRs to develop must come from a feature/* branch!"
+            exit 1
+          fi
+
+          echo "✅ PR source branch is valid."
