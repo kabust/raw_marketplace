@@ -1,5 +1,5 @@
 # RAW Marketplace
-In case of any questions contact (kabust)[https://github.com/kabust/]
+In case of any questions contact [kabust](https://github.com/kabust/)
 <hr>
 
 ## Technologies stack:
