@@ -18,4 +18,4 @@ In case of any questions contact [kabust](https://github.com/kabust/)
 * On any Pull Request automated unit tests will be running, so don't forget to write them.
 
 
-_Note: This is **staging** branch, make PRs to this branch from **develop**_
+_Note: This is **prod** branch, make PRs to this branch from **staging**_
