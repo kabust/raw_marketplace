@@ -33,18 +33,20 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Built-ins
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    # 3-rd party libraries
     "debug_toolbar",
+    "django_extensions",
     "rest_framework",
-    "cart",
-    "category",
-    "checkout",
-    "image",
+
+    # Applications
     "order",
     "product",
     "user"

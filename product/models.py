@@ -1,12 +1,42 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from category.models import Category
-from image.models import Image
+
+class GenderChoice(models.TextChoices):
+    MALE = "male", "Male"
+    FEMALE = "female", "Female"
+    UNISEX = "unisex", "Unisex"
+
+
+class Image(models.Model):
+    filename = models.CharField(max_length=255)
+    path = models.CharField(max_length=255, unique=True)
+    image = models.ImageField()
+
+    def __str__(self):
+        return self.filename
+
 
 
 class Option(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    class OptionType(models.TextChoices):
+        COLOR = "color", "Color"
+        CLOTHING_SIZE = "clothing_size", "Clothing_size"
+        PRODUCT_SIZE = "product_size", "Product_size"
+        MATERIAL = "material", "Material"
+
+    type = models.CharField(max_length=15, choices=OptionType.choices)
+    value = models.CharField(max_length=63)
+
+    def __str__(self):
+        return f"{self.type}: {self.value}"
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=63, unique=True)
+
+    class Meta:
+        verbose_name_plural = "Categories"
 
     def __str__(self):
         return self.name
@@ -30,9 +60,10 @@ class Product(models.Model):
         null=True,
         related_name="product_main"
     )
-    images = models.ManyToManyField(Image, related_name="products")
-    options = models.ManyToManyField(Option, related_name="products")
+    images = models.ManyToManyField(Image, related_name="products", null=True, blank=True)
+    options = models.ManyToManyField(Option, related_name="products", null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products")
+    gender = models.CharField(max_length=10, choices=GenderChoice, default=GenderChoice.UNISEX)
 
     @property
     def final_price(self):
