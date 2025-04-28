@@ -1,0 +1,25 @@
+name: Lint with Flake8
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  flake8-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install flake8 with pyproject support
+        run: pip install flake8 flake8-pyproject
+
+      - name: Run flake8 via pflake8
+        run: flake8p .
