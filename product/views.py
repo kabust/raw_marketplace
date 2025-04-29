@@ -4,7 +4,8 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from product.models import Product, Option, Category, Image
-from product.serializers import ProductSerializer, OptionSerializer, CategorySerializer, ImageSerializer
+from product.serializers import ProductSerializer, OptionSerializer, CategorySerializer, ImageSerializer, \
+    ProductListSerializer
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -19,7 +20,15 @@ class ImageViewSet(viewsets.ModelViewSet):
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.prefetch_related("options").select_related("category")
-    serializer_class = ProductSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return ProductListSerializer
+
+        if self.action == "retrieve":
+            return ProductDetailSerializer
+
+        return ProductSerializer
 
 
 class OptionViewSet(viewsets.ModelViewSet):

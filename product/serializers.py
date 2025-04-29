@@ -23,8 +23,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    options = OptionSerializer(many=True, read_only=True)
-    category = serializers.CharField(source="category.name", read_only=True)
+    main_image = ImageSerializer(write_only=True)
+
     class Meta:
         model = Product
         fields = (
@@ -35,10 +35,62 @@ class ProductSerializer(serializers.ModelSerializer):
             "description",
             "amount",
             "is_active",
+            "images",
+            "options",
+            "category",
+            "gender",
+            "main_image",
+        )
+
+    def create(self, validated_data):
+        images_data = validated_data.pop("main_image")
+
+        image = Image.objects.create(**images_data)
+        product = Product.objects.create(main_image=image, **validated_data)
+
+        return product
+
+
+class ProductListSerializer(ProductSerializer):
+    category = serializers.CharField(source="category.name", read_only=True)
+    main_image = serializers.CharField(source="main_image.filename", read_only=True)
+
+    class Meta:
+        model = Product
+        fields = (
+            "id",
+            "title",
+            "price",
+            "discount",
+            "final_price",
+            "is_active",
+            "main_image",
+            "category",
+            "gender",
+        )
+
+class ProductDetailSerializer(ProductSerializer):
+    options = OptionSerializer(many=True, read_only=True)
+    images = ImageSerializer(many=True, read_only=True)
+    category = serializers.CharField(source="category.name", read_only=True)
+    main_image = serializers.CharField(source="main_image.filename", read_only=True)
+
+    class Meta:
+        model = Product
+        fields = (
+            "id",
+            "title",
+            "price",
+            "discount",
+            "final_price",
+            "description",
+            "amount",
+            "is_active",
             "main_image",
             "images",
             "options",
             "category",
             "gender",
         )
+
 
