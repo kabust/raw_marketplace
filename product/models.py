@@ -1,5 +1,6 @@
 import os
 import uuid
+from decimal import Decimal
 
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -76,7 +77,7 @@ class Product(models.Model):
 
     @property
     def final_price(self):
-        return self.price * ((100 - self.discount) / 100)
+        return self.price * ((100 - Decimal(self.discount)) / 100)
 
     def __str__(self):
         return f"{self.title} ({self.category.name}), {self.amount} pcs in stock"

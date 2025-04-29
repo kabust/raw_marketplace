@@ -6,20 +6,20 @@ from product.models import Product, Option, Category, Image
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
-        fields = ("type", "value")
+        fields = ("id", "type", "value")
 
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = ("filename", "image")
+        fields = ("id", "filename", "image")
 
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ("name",)
+        fields = ("id","name",)
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -44,16 +44,21 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         images_data = validated_data.pop("main_image")
+        images = validated_data.pop("images")
+        options = validated_data.pop("options")
 
         image = Image.objects.create(**images_data)
         product = Product.objects.create(main_image=image, **validated_data)
+        product.images.set(images)
+        product.options.set(options)
+        product.save()
 
         return product
 
 
 class ProductListSerializer(ProductSerializer):
     category = serializers.CharField(source="category.name", read_only=True)
-    main_image = serializers.CharField(source="main_image.filename", read_only=True)
+    main_image = serializers.ImageField(source="main_image.image", read_only=True)
 
     class Meta:
         model = Product
@@ -73,7 +78,7 @@ class ProductDetailSerializer(ProductSerializer):
     options = OptionSerializer(many=True, read_only=True)
     images = ImageSerializer(many=True, read_only=True)
     category = serializers.CharField(source="category.name", read_only=True)
-    main_image = serializers.CharField(source="main_image.filename", read_only=True)
+    main_image = serializers.ImageField(source="main_image.image", read_only=True)
 
     class Meta:
         model = Product

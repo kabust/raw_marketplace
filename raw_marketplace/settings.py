@@ -133,6 +133,11 @@ STATIC_URL = "static/"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "product.views.CustomPageNumberPagination",
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
