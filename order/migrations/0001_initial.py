@@ -45,9 +45,7 @@ class Migration(migrations.Migration):
                 (
                     "amount",
                     models.SmallIntegerField(
-                        validators=[
-                            django.core.validators.MaxValueValidator(100)
-                        ]
+                        validators=[django.core.validators.MaxValueValidator(100)]
                     ),
                 ),
                 (

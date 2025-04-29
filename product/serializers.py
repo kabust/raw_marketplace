@@ -15,11 +15,13 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = ("id", "filename", "image")
 
 
-
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ("id","name",)
+        fields = (
+            "id",
+            "name",
+        )
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -74,6 +76,7 @@ class ProductListSerializer(ProductSerializer):
             "gender",
         )
 
+
 class ProductDetailSerializer(ProductSerializer):
     options = OptionSerializer(many=True, read_only=True)
     images = ImageSerializer(many=True, read_only=True)
@@ -97,5 +100,3 @@ class ProductDetailSerializer(ProductSerializer):
             "category",
             "gender",
         )
-
-

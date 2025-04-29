@@ -19,13 +19,13 @@ def movie_image_file_path(instance, title):
 
     return os.path.join("uploads/products/", title)
 
+
 class Image(models.Model):
     filename = models.CharField(max_length=255, blank=True)
     image = models.ImageField(upload_to=movie_image_file_path)
 
     def __str__(self):
         return self.filename
-
 
 
 class Option(models.Model):
@@ -64,11 +64,7 @@ class Product(models.Model):
     amount = models.PositiveIntegerField()
     is_active = models.BooleanField(default=True)
     main_image = models.OneToOneField(
-        Image,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        related_name="product_main"
+        Image, on_delete=models.CASCADE, blank=True, null=True, related_name="product_main"
     )
     images = models.ManyToManyField(Image, related_name="products", null=True, blank=True)
     options = models.ManyToManyField(Option, related_name="products", null=True, blank=True)

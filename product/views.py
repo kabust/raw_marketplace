@@ -2,8 +2,14 @@ from rest_framework import viewsets, status
 
 from product.models import Product, Option, Category, Image
 from product.permissions import IsAdminOrReadOnly
-from product.serializers import ProductSerializer, OptionSerializer, CategorySerializer, ImageSerializer, \
-    ProductListSerializer, ProductDetailSerializer
+from product.serializers import (
+    ProductSerializer,
+    OptionSerializer,
+    CategorySerializer,
+    ImageSerializer,
+    ProductListSerializer,
+    ProductDetailSerializer,
+)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -19,7 +25,9 @@ class ImageViewSet(viewsets.ModelViewSet):
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.prefetch_related("options", "images").select_related("category", "main_image")
+    queryset = Product.objects.prefetch_related("options", "images").select_related(
+        "category", "main_image"
+    )
     permission_classes = (IsAdminOrReadOnly,)
 
     def get_serializer_class(self):
