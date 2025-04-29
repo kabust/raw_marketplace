@@ -8,11 +8,10 @@ from product.serializers import ProductSerializer, OptionSerializer, CategorySer
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAdminUser,)
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.objects.prefetch_related("options").select_related("category")
     serializer_class = ProductSerializer
 
 
