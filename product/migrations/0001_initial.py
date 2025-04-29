@@ -80,9 +80,7 @@ class Migration(migrations.Migration):
                     models.DecimalField(
                         decimal_places=2,
                         max_digits=7,
-                        validators=[
-                            django.core.validators.MinValueValidator(0.0)
-                        ],
+                        validators=[django.core.validators.MinValueValidator(0.0)],
                     ),
                 ),
                 (
@@ -91,9 +89,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         default=0,
                         null=True,
-                        validators=[
-                            django.core.validators.MaxValueValidator(100)
-                        ],
+                        validators=[django.core.validators.MaxValueValidator(100)],
                     ),
                 ),
                 (
@@ -124,9 +120,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "images",
-                    models.ManyToManyField(
-                        related_name="products", to="product.image"
-                    ),
+                    models.ManyToManyField(related_name="products", to="product.image"),
                 ),
                 (
                     "main_image",
@@ -140,9 +134,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "options",
-                    models.ManyToManyField(
-                        related_name="products", to="product.option"
-                    ),
+                    models.ManyToManyField(related_name="products", to="product.option"),
                 ),
             ],
         ),
