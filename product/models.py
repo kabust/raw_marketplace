@@ -1,5 +1,9 @@
+import os
+import uuid
+
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils.text import slugify
 
 
 class GenderChoice(models.TextChoices):
@@ -8,10 +12,15 @@ class GenderChoice(models.TextChoices):
     UNISEX = "unisex", "Unisex"
 
 
+def movie_image_file_path(instance, title):
+    _, extension = os.path.splitext(title)
+    title = f"{slugify(instance.filename)}-{uuid.uuid4()}{extension}"
+
+    return os.path.join("uploads/products/", title)
+
 class Image(models.Model):
-    filename = models.CharField(max_length=255)
-    path = models.CharField(max_length=255, unique=True)
-    image = models.ImageField()
+    filename = models.CharField(max_length=255, blank=True)
+    image = models.ImageField(upload_to=movie_image_file_path)
 
     def __str__(self):
         return self.filename
@@ -21,8 +30,8 @@ class Image(models.Model):
 class Option(models.Model):
     class OptionType(models.TextChoices):
         COLOR = "color", "Color"
-        CLOTHING_SIZE = "clothing_size", "Clothing_size"
-        PRODUCT_SIZE = "product_size", "Product_size"
+        CLOTHING_SIZE = "clothing_size", "Clothing size"
+        PRODUCT_SIZE = "product_size", "Product size"
         MATERIAL = "material", "Material"
 
     type = models.CharField(max_length=15, choices=OptionType.choices)
