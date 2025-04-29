@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 
 from product.models import Product, Option, Category, Image
 from product.permissions import IsAdminOrReadOnly
