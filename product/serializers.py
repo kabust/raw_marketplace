@@ -1,5 +1,3 @@
-from itertools import product
-
 from rest_framework import serializers
 
 from product.models import Product, Option, Category
@@ -18,7 +16,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-
+    options = OptionSerializer(many=True, read_only=True)
+    category = serializers.CharField(source="category.name", read_only=True)
     class Meta:
         model = Product
         fields = (
@@ -36,13 +35,3 @@ class ProductSerializer(serializers.ModelSerializer):
             "gender",
         )
 
-        def create(self, validated_data):
-            category = validated_data.pop("category")
-            options = validated_data.pop("options")
-            product = super().create(validated_data)
-            for option in options:
-                product.options.add(option)
-
-            category, _ = Category.objects.get_or_create(name=category)
-
-            return product
