@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # 3-rd party libraries
     "debug_toolbar",
-    "django_extensions",
     "rest_framework",
     # Applications
     "order",
