@@ -13,14 +13,30 @@ class CartEntry(models.Model):
     def entry_total(self):
         return self.product.final_price * self.amount
 
+    def __str__(self):
+        return f"{self.product}: {self.amount} pcs, {self.entry_total}"
+
 
 class Cart(models.Model):
     timestamp_first_added = models.DateTimeField(auto_now=True)
     cart_entries = models.ForeignKey(CartEntry, on_delete=models.DO_NOTHING)
 
+    def __str__(self):
+        return f"{self.cart_entries.entry_total}"
+
+
 
 class PaymentMethod(models.Model):
-    name = models.CharField(max_length=63, unique=True)
+    class PaymentType(models.TextChoices):
+        GOOGLE = "google", "Google"
+        APPLE = "apple", "Apple"
+        CARD = "card", "Card"
+        CASH = "cash", "Cash"
+
+    name = models.CharField(max_length=63, choices=PaymentType.choices)
+
+    def __str__(self):
+        return self.name
 
 
 class Checkout(models.Model):
@@ -42,6 +58,10 @@ class Checkout(models.Model):
     city_payment = models.CharField(max_length=255, blank=True, null=True)
     street_name_payment = models.CharField(max_length=255, blank=True, null=True)
     house_number_payment = models.CharField(max_length=63, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.is_payed}"
+
 
 
 class Order(models.Model):
