@@ -17,7 +17,6 @@ class Image(models.Model):
         return self.filename
 
 
-
 class Option(models.Model):
     class OptionType(models.TextChoices):
         COLOR = "color", "Color"
@@ -54,11 +53,7 @@ class Product(models.Model):
     amount = models.PositiveIntegerField()
     is_active = models.BooleanField(default=True)
     main_image = models.OneToOneField(
-        Image,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        related_name="product_main"
+        Image, on_delete=models.CASCADE, blank=True, null=True, related_name="product_main"
     )
     images = models.ManyToManyField(Image, related_name="products", null=True, blank=True)
     options = models.ManyToManyField(Option, related_name="products", null=True, blank=True)

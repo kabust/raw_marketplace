@@ -40,10 +40,6 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "oauth2_provider",
     "rest_framework",
-    "cart",
-    "category",
-    "checkout",
-    "image",
     "order",
     "product",
     "user",
@@ -132,9 +128,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-)
+AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
 
 OAUTH2_PROVIDER = {
     "SCOPES": {"read": "Read scope", "write": "Write scope", "groups": "Access to your groups"}
