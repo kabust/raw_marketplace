@@ -22,5 +22,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/market/", include("product.urls", namespace="product")),
     path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),
-    path("user/", include("user.urls", namespace="user")),
+    path("api/user/", include("user.urls", namespace="user")),
 ]

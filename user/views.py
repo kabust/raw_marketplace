@@ -9,19 +9,18 @@ from user.serializers import UserSerializer, UserRegistrationSerializer, Passwor
 
 class UserViewSet(viewsets.ViewSet):
     authentication_classes = [OAuth2Authentication]
-    permission_classes = [permissions.AllowAny, TokenHasReadWriteScope]
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
+    permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
+    serializer_classes = {
+        "register": UserRegistrationSerializer,
+        "set_password": PasswordUpdateSerializer,
+        "me": UserSerializer
+    }
+    default_serializer_class = UserSerializer
 
-    def get_serializer_class(self):
-        if self.action == "register":
-            return UserRegistrationSerializer
-        elif self.action == "set_password":
-            return PasswordUpdateSerializer
-        elif self.action == "me":
-            return UserSerializer
+    def get_queryset(self):
+        return User.objects.all()
 
-    @action(detail=False, methods=["get"])
+    @action(detail=False, url_path="me", methods=["get"])
     def me(self, request):
         serializer = self.get_serializer_class()
         serialized_user = serializer(request.user)
@@ -29,16 +28,14 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'], permission_classes=[permissions.AllowAny])
     def register(self, request):
-        serializer = self.get_serializer_class()
-        serializer.is_valid(request.data, raise_exception=True)
-        serialized_user = serializer(request.user)
-        user = serialized_user.save()
+        serializer = self.get_serializer_class()(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response({'message': 'User created successfully.'}, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'])
     def set_password(self, request):
-        serializer = self.get_serializer_class()
-        serializer.is_valid(request.data, raise_exception=True)
-        serialized_user = serializer(request.user)
-        serialized_user.save()
+        serializer = self.get_serializer_class()(data=request.data, instance=request.user)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response({'message': 'Password updated successfully.'})
