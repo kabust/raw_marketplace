@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.validators import MaxValueValidator
 from django.db import models
 
@@ -40,7 +41,7 @@ class PaymentMethod(models.Model):
 
 
 class Checkout(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True)
     is_payed = models.BooleanField(default=False)
@@ -66,7 +67,7 @@ class Checkout(models.Model):
 
 class Order(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     checkout = models.ForeignKey(Checkout, on_delete=models.SET_NULL, null=True)
 
