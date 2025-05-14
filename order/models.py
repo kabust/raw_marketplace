@@ -26,7 +26,6 @@ class Cart(models.Model):
         return f"{self.cart_entries.entry_total}"
 
 
-
 class PaymentMethod(models.Model):
     class PaymentType(models.TextChoices):
         GOOGLE = "google", "Google"
@@ -62,7 +61,6 @@ class Checkout(models.Model):
 
     def __str__(self):
         return f"{self.is_payed}"
-
 
 
 class Order(models.Model):

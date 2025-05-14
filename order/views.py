@@ -2,7 +2,12 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from order.models import Checkout, CartEntry, Cart, PaymentMethod
-from order.serializers import CartEntrySerializer, CartSerializer, CheckoutSerializer, PaymentMethodSerializer
+from order.serializers import (
+    CartEntrySerializer,
+    CartSerializer,
+    CheckoutSerializer,
+    PaymentMethodSerializer,
+)
 
 
 class CartEntryViewSet(viewsets.ModelViewSet):
