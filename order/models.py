@@ -3,7 +3,6 @@ from django.core.validators import MaxValueValidator
 from django.db import models
 
 from product.models import Product
-from user.models import User
 
 
 class CartEntry(models.Model):
