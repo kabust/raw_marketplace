@@ -1,5 +1,3 @@
-from itertools import product
-
 from rest_framework import serializers
 
 from product.models import Product, Option, Category
