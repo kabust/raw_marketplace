@@ -4,10 +4,10 @@ from rest_framework import routers
 from order.views import CartEntryViewSet, CartViewSet, PaymentMethodViewSet, CheckoutViewSet
 
 router = routers.DefaultRouter()
-router.register("cart-entry", CartEntryViewSet)
-router.register("cart", CartViewSet)
-router.register("payment_method", PaymentMethodViewSet)
-router.register("billing", CheckoutViewSet)
+router.register("cart-entries", CartEntryViewSet)
+router.register("carts", CartViewSet)
+router.register("payment_methods", PaymentMethodViewSet)
+router.register("checkouts", CheckoutViewSet)
 
 urlpatterns = [path("", include(router.urls))]
 
