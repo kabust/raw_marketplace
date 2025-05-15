@@ -1,8 +1,8 @@
+from django.conf import settings
 from django.core.validators import MaxValueValidator
 from django.db import models
 
 from product.models import Product
-from user.models import User
 
 
 class CartEntry(models.Model):
@@ -13,18 +13,33 @@ class CartEntry(models.Model):
     def entry_total(self):
         return self.product.final_price * self.amount
 
+    def __str__(self):
+        return f"{self.product}: {self.amount} pcs, {self.entry_total}"
+
 
 class Cart(models.Model):
     timestamp_first_added = models.DateTimeField(auto_now=True)
     cart_entries = models.ForeignKey(CartEntry, on_delete=models.DO_NOTHING)
 
+    def __str__(self):
+        return f"{self.cart_entries.entry_total}"
+
 
 class PaymentMethod(models.Model):
-    name = models.CharField(max_length=63, unique=True)
+    class PaymentType(models.TextChoices):
+        GOOGLE = "google", "Google"
+        APPLE = "apple", "Apple"
+        CARD = "card", "Card"
+        CASH = "cash", "Cash"
+
+    name = models.CharField(max_length=63, choices=PaymentType.choices)
+
+    def __str__(self):
+        return self.name
 
 
 class Checkout(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True)
     is_payed = models.BooleanField(default=False)
@@ -43,10 +58,13 @@ class Checkout(models.Model):
     street_name_payment = models.CharField(max_length=255, blank=True, null=True)
     house_number_payment = models.CharField(max_length=63, blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.is_payed}"
+
 
 class Order(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     checkout = models.ForeignKey(Checkout, on_delete=models.SET_NULL, null=True)
 
