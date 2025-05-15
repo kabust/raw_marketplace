@@ -15,7 +15,7 @@ class UserViewSet(viewsets.GenericViewSet):
     serializer_classes = {
         "register": UserRegistrationSerializer,
         "set_password": PasswordUpdateSerializer,
-        "me": UserSerializer
+        "me": UserSerializer,
     }
 
     def get_serializer_class(self):
@@ -26,16 +26,16 @@ class UserViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['post'], permission_classes=[permissions.AllowAny])
+    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny])
     def register(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({'message': 'User created successfully.'}, status=status.HTTP_201_CREATED)
+        return Response({"message": "User created successfully."}, status=status.HTTP_201_CREATED)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def set_password(self, request):
         serializer = self.get_serializer(data=request.data, instance=request.user)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({'message': 'Password updated successfully.'})
+        return Response({"message": "Password updated successfully."})
