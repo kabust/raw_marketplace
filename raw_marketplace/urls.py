@@ -23,6 +23,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/v1/", include("order.urls", namespace="order")),
     path("api/v1/", include("product.urls", namespace="product")),
     path("api/v1/", include("user.urls", namespace="user")),
     path("o/", include("oauth2_provider.urls", namespace="oauth2_provider")),

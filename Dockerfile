@@ -22,6 +22,7 @@ WORKDIR /backend
 COPY pyproject.toml poetry.lock* ./
 RUN pip install poetry \
     && poetry config virtualenvs.create false \
+    && poetry lock \
     && poetry install --no-interaction --no-ansi
 
 # Copy the rest of the project files
