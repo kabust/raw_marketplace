@@ -7,35 +7,35 @@ from user.models import User
 from user.serializers import UserSerializer, UserRegistrationSerializer, PasswordUpdateSerializer
 
 
-class UserViewSet(viewsets.ViewSet):
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
+class UserViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    authentication_classes = (OAuth2Authentication,)
+    permission_classes = (permissions.IsAuthenticated, TokenHasReadWriteScope)
+    default_serializer_class = UserSerializer
     serializer_classes = {
         "register": UserRegistrationSerializer,
         "set_password": PasswordUpdateSerializer,
         "me": UserSerializer
     }
-    default_serializer_class = UserSerializer
 
-    def get_queryset(self):
-        return User.objects.all()
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
 
     @action(detail=False, url_path="me", methods=["get"])
     def me(self, request):
-        serializer = self.get_serializer_class()
-        serialized_user = serializer(request.user)
-        return Response(serialized_user.data)
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
 
     @action(detail=False, methods=['post'], permission_classes=[permissions.AllowAny])
     def register(self, request):
-        serializer = self.get_serializer_class()(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({'message': 'User created successfully.'}, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'])
     def set_password(self, request):
-        serializer = self.get_serializer_class()(data=request.data, instance=request.user)
+        serializer = self.get_serializer(data=request.data, instance=request.user)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({'message': 'Password updated successfully.'})
