@@ -7,10 +7,10 @@ from django.utils import timezone
 from oauth2_provider.models import AccessToken, RefreshToken
 
 
-def get_authentication_code(username: str) -> tuple[str, str]:
+def get_authentication_code(email: str) -> tuple[str, str]:
 
     try:
-        user = get_user_model().objects.get(username=username)
+        user = get_user_model().objects.get(email=email)
     except get_user_model().DoesNotExist:
         raise Exception("User does not exist!")
 
