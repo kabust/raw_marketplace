@@ -1,32 +1,56 @@
+version: '3.9'
+
 services:
   django:
     build:
-      context: .
+      context: ./backend
+      dockerfile: Dockerfile
     env_file:
       - .env
     ports:
       - "8001:8000"
     volumes:
-      - ./:/app
+      - ./backend:/app
       - media_volume:/app/files/media
-    working_dir: /app
-    command: >
-      sh -c "
-        python manage.py wait_for_db &&
-        python manage.py migrate &&
-        python manage.py runserver 0.0.0.0:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy # Use healthcheck
+    entrypoint: /usr/local/bin/django-entrypoint.sh
+    healthcheck:
+      test: ["CMD-SHELL", "python manage.py check --deploy || exit 1"] # Basic Django health check
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Revamped: Your Vue.js SPA service (now serves directly via Nginx in its container)
+  vue:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile # This is the Dockerfile from Step 1
+    # No env_file or environment needed here for Nginx itself,
+    # as environment variables for Vue are usually baked in during `npm run build`.
+    ports:
+      - "5025:80" # Map host port 5025 to container's Nginx port 80
+    # For a production build, volumes for source code are typically removed
+    # as the app is built into the image. Uncomment if you want to mount for dev.
+    # volumes:
+    #   - ./frontend:/app # Mount the frontend source code for hot-reloading (development)
+    #   - /app/node_modules # Anonymous volume to prevent host node_modules issues
+    depends_on:
+      - django # Vue often depends on Django being up for API calls (e.g., when it loads initially)
 
   db:
-    image: postgres:alpine3.21
-    restart: always
+    image: postgres:17-alpine
+    restart: unless-stopped
     env_file:
       - .env
-    ports:
-      - "5432:5432"
     volumes:
       - db_volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"] # Health check for PostgreSQL
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   db_volume:
