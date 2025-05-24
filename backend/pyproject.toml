@@ -1,7 +1,7 @@
 [project]
 name = "raw-marketplace"
 version = "0.1.0"
-description = "Backend side of Raw Marketplace project based on Django Rest Framework"
+description = "Backend side of Niff Marketplace project based on Django Rest Framework"
 authors = [
     {name = "kabust",email = "tulyulyuk91@gmail.com"}
 ]

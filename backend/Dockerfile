@@ -3,7 +3,6 @@ LABEL maintainer="raw-marketplace@googlegroups.com"
 
 ENV PYTHONUNBUFFERED 1
 
-# Install dependencies for building Python packages
 RUN apk update && apk add --no-cache \
     build-base \
     libffi-dev \
@@ -15,20 +14,19 @@ RUN apk update && apk add --no-cache \
     curl \
     bash
 
-# Set working directory
 WORKDIR /backend
 
-# Install Poetry and project dependencies
+COPY django-entrypoint.sh /usr/local/bin/django-entrypoint.sh
+RUN chmod +x /usr/local/bin/django-entrypoint.sh
+
 COPY pyproject.toml poetry.lock* ./
 RUN pip install poetry \
     && poetry config virtualenvs.create false \
     && poetry lock \
     && poetry install --no-interaction --no-ansi
 
-# Copy the rest of the project files
 COPY . .
 
-# Create and configure media directory
 RUN mkdir -p /backend/files/media \
     && adduser --disabled-password --no-create-home docker \
     && chown -R docker /backend/files/media \
