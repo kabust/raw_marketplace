@@ -82,3 +82,11 @@ def create_order_payu(token, exp_time, customer_ip, total_amount, products, buye
     url_sandbox = "https://secure.snd.payu.com/api/v2_1/orders"
     response = requests.post(url_sandbox, headers=headers, json=data, allow_redirects=False)
     return response.json()
+
+
+def get_user_or_session_key(request):
+    if request.user.is_authenticated:
+        return request.user, request.session.session_key
+    if not request.session.session_key:
+        request.session.save()
+    return None, request.session.session_key

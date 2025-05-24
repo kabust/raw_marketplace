@@ -7,6 +7,10 @@ from product.models import Product
 
 class Cart(models.Model):
     timestamp_first_added = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE
+    )
+    session_id = models.CharField(max_length=255, null=True, blank=True)
 
     @property
     def total_value(self):

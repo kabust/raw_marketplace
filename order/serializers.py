@@ -1,7 +1,9 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from order.models import CartEntry, Cart, PaymentMethod, Checkout, Order
-from user.utils import get_authentication_code_payu, create_order_payu
+from product.models import Product
+from user.utils import get_authentication_code_payu, create_order_payu, get_user_or_session_key
 
 
 class CartEntrySerializer(serializers.ModelSerializer):
@@ -9,11 +11,38 @@ class CartEntrySerializer(serializers.ModelSerializer):
         model = CartEntry
         fields = (
             "id",
+            "cart",
             "product",
             "amount",
             "entry_total",
         )
-        read_only_fields = ("entry_total",)
+        read_only_fields = ("entry_total", "cart")
+
+    def validate(self, attrs):
+        product = attrs.get("product")
+        amount = attrs.get("amount")
+
+        if amount < 1 or amount > product.amount:
+            raise serializers.ValidationError("Insufficient amount.")
+
+        return attrs
+
+    def create(self, validated_data):
+        user, session_key = get_user_or_session_key(self.context.get("request"))
+        if user:
+            cart, _ = Cart.objects.get_or_create(user=user)
+        elif session_key:
+            cart, _ = Cart.objects.get_or_create(session_key=session_key)
+
+        with transaction.atomic():
+
+            amount_to_buy = validated_data.get("amount")
+            product = validated_data.get("product")
+            product.amount -= amount_to_buy
+            product.save()
+            cart_entry = CartEntry.objects.create(**validated_data, cart=cart)
+
+        return cart_entry
 
 
 class CartSerializer(serializers.ModelSerializer):
