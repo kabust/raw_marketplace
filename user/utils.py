@@ -64,7 +64,7 @@ def get_authentication_code_payu():
 def create_order_payu(token, exp_time, customer_ip, total_amount, products, buyer):
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     merchant_id = str(PAYU_CLIENT_ID)
-    description = f"Order for name surname buying product"
+    description = "Order for name surname buying product"
     currency_code = "PLN"
     totalAmount = str(int(total_amount * 100))
 
