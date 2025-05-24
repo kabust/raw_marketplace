@@ -6,13 +6,12 @@ on:
       - '**'
 
 jobs:
-  phpunit:
+  flake8-lint:
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: ./backend
-  flake8-lint:
-    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
