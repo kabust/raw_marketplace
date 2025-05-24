@@ -5,8 +5,20 @@ from django.db import models
 from product.models import Product
 
 
+class Cart(models.Model):
+    timestamp_first_added = models.DateTimeField(auto_now=True)
+
+    @property
+    def total_value(self):
+        return sum(entry.entry_total for entry in self.cart_entries.all())
+
+    def __str__(self):
+        return f"{self.total_value}"
+
+
 class CartEntry(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_entries")
     amount = models.SmallIntegerField(validators=[MaxValueValidator(100)])
 
     @property
@@ -15,14 +27,6 @@ class CartEntry(models.Model):
 
     def __str__(self):
         return f"{self.product}: {self.amount} pcs, {self.entry_total}"
-
-
-class Cart(models.Model):
-    timestamp_first_added = models.DateTimeField(auto_now=True)
-    cart_entries = models.ForeignKey(CartEntry, on_delete=models.DO_NOTHING)
-
-    def __str__(self):
-        return f"{self.cart_entries.entry_total}"
 
 
 class PaymentMethod(models.Model):
@@ -65,8 +69,9 @@ class Checkout(models.Model):
 class Order(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     checkout = models.ForeignKey(Checkout, on_delete=models.SET_NULL, null=True)
+    redirect_url = models.URLField(max_length=511, blank=True, null=True)
+    payu_order_id = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f"User {self.user.email} ordered items from cart_id: {self.cart.id}"
+        return f"User {self.user.email} ordered items from cart_id: {self.checkout.id}"

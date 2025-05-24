@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from order.models import CartEntry, Cart, PaymentMethod, Checkout
+from order.models import CartEntry, Cart, PaymentMethod, Checkout, Order
+from user.utils import get_authentication_code_payu, create_order_payu
 
 
 class CartEntrySerializer(serializers.ModelSerializer):
@@ -64,3 +65,46 @@ class CheckoutSerializer(serializers.ModelSerializer):
             data["street_name_payment"] = data.get("street_name_delivery")
             data["house_number_payment"] = data.get("house_number_delivery")
         return data
+
+    def create(self, validated_data):
+        checkout = super().create(validated_data)
+        token, exp_time = get_authentication_code_payu()
+        customer_ip = self.context.get("request").META.get("REMOTE_ADDR")
+        total_price = checkout.cart.total_value
+        products = [
+            {
+                "name": entry.product.title,
+                "unitPrice": str(int(entry.product.price * 100)),
+                "quantity": str(entry.amount),
+            }
+            for entry in checkout.cart.cart_entries.all()
+        ]
+        buyer = {
+            "email": checkout.user.email,
+            "firstName": checkout.first_name_payment,
+            "lastName": checkout.last_name_payment,
+            "delivery": {
+                "street": checkout.street_name_payment,
+                "city": checkout.city_payment,
+            },
+        }
+
+        order_payu = create_order_payu(token, exp_time, customer_ip, total_price, products, buyer)
+        if order_payu.get("status").get("statusCode") == "SUCCESS":
+            redirect_url = order_payu.get("redirectUri")
+            order_id = order_payu.get("orderId")
+
+            Order.objects.create(
+                user=checkout.user,
+                checkout=checkout,
+                redirect_url=redirect_url,
+                payu_order_id=order_id,
+            )
+        return checkout
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ("id", "user", "checkout", "redirect_url", "payu_order_id")
+        read_only_fields = ("id", "user", "checkout", "redirect_url", "payu_order_id")

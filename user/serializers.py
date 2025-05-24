@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate
 from rest_framework import serializers
 
 from user.models import User
@@ -20,6 +21,21 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
 
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, style={"input_type": "password"})
+
+    class Meta:
+        fields = ("email", "password")
+
+    def validate(self, data):
+        user = authenticate(email=data["email"], password=data["password"])
+        if not user:
+            raise serializers.ValidationError("Invalid email or password.")
+        data["user"] = user
+        return data
+
+
 class PasswordUpdateSerializer(serializers.Serializer):
     old_password = serializers.CharField(write_only=True, style={"input_type": "password"})
     new_password = serializers.CharField(write_only=True, style={"input_type": "password"})
@@ -35,3 +51,10 @@ class PasswordUpdateSerializer(serializers.Serializer):
         user.set_password(self.validated_data["new_password"])
         user.save()
         return user
+
+
+class LoginResponseSerializer(serializers.Serializer):
+    access_token = serializers.CharField(read_only=True, default="")
+    refresh_token = serializers.CharField(read_only=True, default="")
+    token_type = serializers.CharField(read_only=True, default="Bearer")
+    expires_in = serializers.IntegerField(read_only=True, default=3600)
