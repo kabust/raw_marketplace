@@ -1,7 +1,13 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from order.views import CartEntryViewSet, CartViewSet, PaymentMethodViewSet, CheckoutViewSet, OrderViewSet
+from order.views import (
+    CartEntryViewSet,
+    CartViewSet,
+    PaymentMethodViewSet,
+    CheckoutViewSet,
+    OrderViewSet,
+)
 
 router = routers.DefaultRouter()
 router.register("cart-entries", CartEntryViewSet)

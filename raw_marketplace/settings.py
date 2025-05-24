@@ -39,12 +39,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # 3-rd party libraries
     "debug_toolbar",
     "oauth2_provider",
     "rest_framework",
-
     # Applications
     "order",
     "product",

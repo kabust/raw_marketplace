@@ -86,7 +86,7 @@ class CheckoutSerializer(serializers.ModelSerializer):
             "delivery": {
                 "street": checkout.street_name_payment,
                 "city": checkout.city_payment,
-            }
+            },
         }
 
         order_payu = create_order_payu(token, exp_time, customer_ip, total_price, products, buyer)
@@ -98,7 +98,7 @@ class CheckoutSerializer(serializers.ModelSerializer):
                 user=checkout.user,
                 checkout=checkout,
                 redirect_url=redirect_url,
-                payu_order_id=order_id
+                payu_order_id=order_id,
             )
         return checkout
 
@@ -106,17 +106,5 @@ class CheckoutSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = (
-            "id",
-            "user",
-            "checkout",
-            "redirect_url",
-            "payu_order_id"
-        )
-        read_only_fields = (
-            "id",
-            "user",
-            "checkout",
-            "redirect_url",
-            "payu_order_id"
-        )
+        fields = ("id", "user", "checkout", "redirect_url", "payu_order_id")
+        read_only_fields = ("id", "user", "checkout", "redirect_url", "payu_order_id")

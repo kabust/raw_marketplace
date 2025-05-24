@@ -6,7 +6,8 @@ from order.serializers import (
     CartEntrySerializer,
     CartSerializer,
     CheckoutSerializer,
-    PaymentMethodSerializer, OrderSerializer,
+    PaymentMethodSerializer,
+    OrderSerializer,
 )
 
 

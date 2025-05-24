@@ -45,28 +45,24 @@ def get_authentication_code(email: str) -> tuple[str, str]:
 
 
 def get_authentication_code_payu():
-    headers = {
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
     response = requests.post(
         "https://secure.snd.payu.com/pl/standard/user/oauth/authorize",
         headers=headers,
         data={
             "client_id": PAYU_CLIENT_ID,
             "client_secret": PAYU_CLIENT_SECRET,
-            "grant_type": "client_credentials"
-        }
+            "grant_type": "client_credentials",
+        },
     )
     token_data = response.json()
     token = token_data.get("access_token")
     exp_time = timedelta(seconds=token_data.get("expires_in")) + datetime.now()
     return token, exp_time
 
+
 def create_order_payu(token, exp_time, customer_ip, total_amount, products, buyer):
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     merchant_id = str(PAYU_CLIENT_ID)
     description = f"Order for name surname buying product"
     currency_code = "PLN"
@@ -80,7 +76,7 @@ def create_order_payu(token, exp_time, customer_ip, total_amount, products, buye
         "currencyCode": currency_code,
         "totalAmount": totalAmount,
         "buyer": buyer,
-        "products": products
+        "products": products,
     }
     print(token)
     url_sandbox = "https://secure.snd.payu.com/api/v2_1/orders"
