@@ -1,12 +1,13 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from order.models import Checkout, CartEntry, Cart, PaymentMethod
+from order.models import Checkout, CartEntry, Cart, PaymentMethod, Order
 from order.serializers import (
     CartEntrySerializer,
     CartSerializer,
     CheckoutSerializer,
     PaymentMethodSerializer,
+    OrderSerializer,
 )
 
 
@@ -37,3 +38,9 @@ class CheckoutViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = (IsAuthenticated,)
